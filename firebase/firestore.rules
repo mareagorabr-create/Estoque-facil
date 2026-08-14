@@ -1,0 +1,63 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Apenas o dono acessa os próprios dados. Nunca confiar no cliente:
+    // toda leitura/escrita passa por estas regras.
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function isOwnerOf(resource) {
+      return isOwner(resource.data.userId);
+    }
+
+    // Validações comuns (tipos e faixas permitidas).
+    function isPositiveNumber(v) {
+      return v is number && v >= 0;
+    }
+
+    match /users/{userId} {
+      allow read, update, delete: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+    }
+
+    match /products/{productId} {
+      allow create: if isOwner(request.resource.data.userId)
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && isPositiveNumber(request.resource.data.quantity)
+        && isPositiveNumber(request.resource.data.minQuantity)
+        && isPositiveNumber(request.resource.data.purchasePrice)
+        && isPositiveNumber(request.resource.data.salePrice);
+      allow read, update, delete: if isOwnerOf(resource);
+      allow update: if request.resource.data.userId == resource.data.userId;
+    }
+
+    match /movements/{movementId} {
+      allow create: if isOwner(request.resource.data.userId)
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+      allow read, update, delete: if isOwnerOf(resource);
+      allow update: if request.resource.data.userId == resource.data.userId;
+    }
+
+    match /suppliers/{supplierId} {
+      allow create: if isOwner(request.resource.data.userId)
+        && request.resource.data.name is string;
+      allow read, update, delete: if isOwnerOf(resource);
+      allow update: if request.resource.data.userId == resource.data.userId;
+    }
+
+    match /alerts/{alertId} {
+      allow create: if isOwner(request.resource.data.userId);
+      allow read, update, delete: if isOwnerOf(resource);
+      allow update: if request.resource.data.userId == resource.data.userId;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -125,7 +125,7 @@ export function ProdutoFormPage() {
         </h1>
       </header>
 
-      {error && (
+{error && (
         <div className="bg-red-100 text-red-800 rounded-2xl p-3 mb-4">
           {error}
         </div>

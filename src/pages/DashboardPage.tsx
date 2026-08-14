@@ -36,14 +36,24 @@ export function DashboardPage() {
     let ativo = true;
     (async () => {
       await garantirDadosDemo(user.id).catch(() => {});
-      const [s, p, alerts] = await Promise.all([getDashboardStats(user.id), preverCompras(user.id), gerarAlertas(user.id)]);
+      const [s, p, alerts] = await Promise.all([
+        getDashboardStats(user.id),
+        preverCompras(user.id),
+        gerarAlertas(user.id),
+      ]);
       if (ativo) {
         setStats(s);
         setPrevisao(p.slice(0, 3));
         setAlerts(alerts);
-        const comEstoqueBaixo = alerts.filter((a) => a.type === "baixo_estoque" && !a.read).length;
-        const vencendo = alerts.filter((a) => a.type === "vencendo" && !a.read).length;
-        const vencidos = alerts.filter((a) => a.type === "vencido" && !a.read).length;
+        const comEstoqueBaixo = alerts.filter(
+          (a) => a.type === "baixo_estoque" && !a.read
+        ).length;
+        const vencendo = alerts.filter(
+          (a) => a.type === "vencendo" && !a.read
+        ).length;
+        const vencidos = alerts.filter(
+          (a) => a.type === "vencido" && !a.read
+        ).length;
         setUnreadAlertsCount(comEstoqueBaixo + vencendo + vencidos);
       }
     })();
@@ -58,14 +68,16 @@ export function DashboardPage() {
     <div className="p-5">
       <header className="mb-5">
         <h1 className="text-xl font-bold">
-          Olá, {user.name.split(" ")[0]}! 👋
+          Olá, {user.name.split(" ")[0]}!👋
         </h1>
-        <p className="text-sm text-slate-500">Sua loja: {user.storeName}</p>
+        <p className="text-sm text-slate-500">
+          Sua loja: {user.storeName}
+        </p>
         <div className="flex items-center gap-2">
           <Bell size={18} className="text-slate-500" />
-          <span className="text-xs font-bold ${
-            unreadAlertsCount > 0 ? "text-danger" : "text-slate-400"
-          }">{unreadAlertsCount}</span>
+          <span className="text-xs font-bold">
+            {unreadAlertsCount > 0 ? "text-danger" : "text-slate-400"}{unreadAlertsCount}
+          </span>
         </div>
       </header>
 
@@ -171,26 +183,6 @@ export function DashboardPage() {
         )}
       </div>
 
-      {/* Lista de alertas não lidos recentes */}
-      {alerts.length > 0 && (
-        <div className="mt-3 p-3 bg-slate-50 rounded-2xl text-sm text-slate-700">
-          <p className="font-semibold mb-2">Últimos alertas:</p>
-          <ul className="space-y-1">
-            {alerts
-              .filter((a) => !a.read)
-              .slice(0, 3)
-              .map((a) => (
-                <li key={a.id} className="flex items-center gap-2">
-                  <span className={a.type === "baixo_estoque" ? "text-danger" : a.type === "vencendo" ? "text-amber-600" : "text-red-500">
-                    {a.type === "baixo_estoque" ? "🔴" : a.type === "vencendo" ? "🟡" : "❌"}
-                  </span>
-                  <span className="truncate">{a.message}</span>
-                </li>
-              ))
-          </ul>
-        </div>
-      )}
-
       {/* Mais vendidos do mês */}
       <div className="flex items-center justify-between mb-2">
         <h2 className="font-semibold text-slate-700 flex items-center gap-2">
@@ -205,9 +197,11 @@ export function DashboardPage() {
           {stats.topVendidos.map((v, idx) => (
             <li key={v.produto.id} className="flex items-center gap-3 p-3">
               <span
-                className={`w-7 h-7 rounded-full grid place-items-center text-xs font-bold ${
-                  idx === 0 ? "bg-primary text-white" : "bg-slate-100 text-slate-500"
-                }`}
+                className={
+                  idx === 0
+                    ? "w-7 h-7 rounded-full grid place-items-center text-xs font-bold bg-primary text-white"
+                    : "w-7 h-7 rounded-full grid place-items-center text-xs font-bold bg-slate-100 text-slate-500"
+                }
               >
                 {idx + 1}
               </span>

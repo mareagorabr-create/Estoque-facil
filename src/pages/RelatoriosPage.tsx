@@ -113,7 +113,7 @@ export function RelatoriosPage() {
         <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-400">
           <p className="text-lg">Sem vendas registradas neste mês.</p>
         </div>
-      )
+      }
 
       {/* Previsão de compra */}
       <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">

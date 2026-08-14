@@ -9,6 +9,7 @@ import type {
   Supplier,
   TipoMovimento,
 } from "../db";
+export type { Alert };
 import { seedDadosDemo } from "./mock";
 
 // ── Usuário ────────────────────────────────────────────────────────────────
@@ -448,12 +449,12 @@ async function enfileirarSync(
  * Envia um item da fila para o Firestore.
  * Em produção, isto usaria o Firestore SDK. No MVP, simula o envio.
  */
-async function enviarParaFirestore(
-  entry: typeof db.syncQueue.$inferInsert,
+export async function enviarParaFirestore(
+  entry: any,
   firestore: any
 ): Promise<boolean> {
   try {
-    const { tableName, action, data, id } = entry;
+    const { tableName, action, data } = entry;
     // Mapeia tabelas Firestore correspondentes
     switch (tableName) {
       case "products":

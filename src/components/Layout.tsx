@@ -1,9 +1,20 @@
 import { useEffect, useState } from "react";
+
+const useOnline = () => {
+  const [online, setOnline] = useState(typeof navigator !== "undefined" ? navigator.onLine : true);
+  useEffect(() => {
+    const up = () => setOnline(true);
+    const down = () => setOnline(false);
+    window.addEventListener("online", up);
+    window.addEventListener("offline", down);
+    return () => { window.removeEventListener("online", up); window.removeEventListener("offline", down); };
+  }, []);
+  return online;
+};
 import { NavLink, Outlet } from "react-router-dom";
 import { Home, Package, ArrowLeftRight, BarChart3, Settings, WifiOff } from "lucide-react";
 
-import { db, uid } from "../db";
-import { processarFilaSync, setupSyncOffline } from "../data";
+import { setupSyncOffline } from "../data";
 
 const abas = [
   { to: "/", label: "Início", Icon: Home, end: true },

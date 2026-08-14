@@ -11,13 +11,13 @@ import {
   CheckCircle2,
   ShoppingCart,
   Bell,
-  BellX,
 } from "lucide-react";
 import { useAuth } from "../auth/context";
 import {
   garantirDadosDemo,
   getDashboardStats,
   gerarAlertas,
+  preverCompras,
   type DashboardStats,
   type Alert,
   type PrevisaoCompra,
@@ -30,6 +30,9 @@ export function DashboardPage() {
   const [previsao, setPrevisao] = useState<PrevisaoCompra[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [unreadAlertsCount, setUnreadAlertsCount] = useState(0);
+  const comEstoqueBaixo = alerts.filter((a) => a.type === "baixo_estoque" && !a.read).length;
+  const vencendo = alerts.filter((a) => a.type === "vencendo" && !a.read).length;
+  const vencidos = alerts.filter((a) => a.type === "vencido" && !a.read).length;
 
   useEffect(() => {
     if (!user) return;

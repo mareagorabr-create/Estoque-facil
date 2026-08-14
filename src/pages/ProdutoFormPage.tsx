@@ -1,23 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { useAuth } from "../auth/context";
-import {
-  Plus,
-  Package,
-  ArrowLeftRight,
-  CheckCircle,
-  X,
-  Calendar,
-  Image,
-  Search,
-  TrendingUp,
-  ShoppingCart,
-  Settings,
-  LogOut,
-} from "lucide-react";
+import { CheckCircle, Image } from "lucide-react";
 import { db, uid } from "../db";
-import { soDigitos, whatsappLink } from "../lib/format";
-import { adicionarFornecedor, listarFornecedores, removerFornecedor } from "../data";
-import { formatarMoeda } from "../lib/format";
+import { useAuth } from "../auth/context";
+import { listarFornecedores } from "../data";
+import { BarcodeScanner } from "../components/BarcodeScanner";
 
 interface FormData {
   name: string;
@@ -46,7 +32,6 @@ export function ProdutoFormPage() {
     unit: "unidade",
   });
   const [showCamera, setShowCamera] = useState(false);
-  const [barcodeFromCamera, setBarcodeFromCamera] = useState<string | null>(null);
   const [suppliers, setSuppliers] = useState<string[]>([]);
   const [selectedSupplier, setSelectedSupplier] = useState<string | undefined>(undefined);
   const [isSaving, setIsSaving] = useState(false);
@@ -66,7 +51,6 @@ export function ProdutoFormPage() {
       ...prev,
       barcode,
     }));
-    setBarcodeFromCamera(null);
     setShowCamera(false);
     barcodeRef.current?.focus();
   };
@@ -84,12 +68,12 @@ export function ProdutoFormPage() {
         userId: user!.id,
         name: form.name.trim(),
         barcode: form.barcode?.trim() || undefined,
-        category: form.category,
+        category: form.category as "Alimentos" | "Bebidas" | "Limpeza" | "Roupas" | "Outros",
         quantity: form.quantity,
         minQuantity: form.minQuantity,
         purchasePrice: form.purchasePrice,
         salePrice: form.salePrice,
-        unit: form.unit,
+        unit: form.unit as "unidade" | "kg" | "litro" | "pacote" | "caixa" | "duzia" | "par" | "grama" | "metro",
         expiryDate: form.expiryDate || undefined,
         photo: form.photo || undefined,
         supplierId: selectedSupplier || undefined,
@@ -344,6 +328,7 @@ export function ProdutoFormPage() {
         <button
           type="button"
           disabled={isSaving}
+          onClick={salvar}
           className="w-full bg-primary text-white font-bold rounded-xl py-3 flex items-center justify-center gap-2"
         >
           {isSaving ? "Salvando..." : "Salvar Produto"}

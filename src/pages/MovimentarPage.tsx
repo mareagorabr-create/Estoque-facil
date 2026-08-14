@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/context";
 import {
-  ArrowLeftRight,
   ArrowDownCircle,
   ArrowUpCircle,
   Search,
   Camera,
-  X,
   CheckCircle,
   Package,
 } from "lucide-react";
@@ -285,13 +283,13 @@ export function MovimentarPage() {
                 className="bg-primary text-white font-bold rounded-xl py-3 flex items-center justify-center gap-2"
               >
                 {tipoMov === "entrada" ? (
-                  <React.Fragment>
+                  <>
                     <ArrowUpCircle size={20} /> Registrar Compra
-                  </React.Fragment>
+                  </>
                 ) : (
-                  <React.Fragment>
+                  <>
                     <ArrowDownCircle size={20} /> Registrar Venda
-                  </React.Fragment>
+                  </>
                 )}
               </button>
               <button
@@ -305,7 +303,7 @@ export function MovimentarPage() {
                 }}
                 className="bg-slate-200 text-slate-600 font-bold rounded-xl py-3 flex items-center justify-center gap-2"
               >
-                {/* Botão limpar já está acima */}
+                Limpar
               </button>
               <button
                 disabled={isProcessing}

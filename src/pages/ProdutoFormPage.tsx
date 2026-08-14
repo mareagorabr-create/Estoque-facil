@@ -125,11 +125,11 @@ export function ProdutoFormPage() {
         </h1>
       </header>
 
-{error && (
+{error ? (
         <div className="bg-red-100 text-red-800 rounded-2xl p-3 mb-4">
           {error}
         </div>
-      )
+      ) : null}
 
       <form className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 max-w-md mx-auto">
         <div className="grid grid-cols-2 gap-3">

@@ -284,7 +284,28 @@ export function MovimentarPage() {
                 onClick={registrar}
                 className="bg-primary text-white font-bold rounded-xl py-3 flex items-center justify-center gap-2"
               >
-                <{tipoMov === "entrada" ? "ArrowUpCircle" : "ArrowDownCircle"} size={20} /> {tipoMov === "entrada" ? "Registrar Compra" : "Registrar Venda"}
+                {tipoMov === "entrada" ? (
+                  <React.Fragment>
+                    <ArrowUpCircle size={20} /> Registrar Compra
+                  </React.Fragment>
+                ) : (
+                  <React.Fragment>
+                    <ArrowDownCircle size={20} /> Registrar Venda
+                  </React.Fragment>
+                )}
+              </button>
+              <button
+                disabled={isProcessing}
+                onClick={() => {
+                  setProdutoSelecionado(null);
+                  setBusca("");
+                  setBarcodeScan(null);
+                  setError(null);
+                  setSuccess(false);
+                }}
+                className="bg-slate-200 text-slate-600 font-bold rounded-xl py-3 flex items-center justify-center gap-2"
+              >
+                {/* Botão limpar já está acima */}
               </button>
               <button
                 disabled={isProcessing}

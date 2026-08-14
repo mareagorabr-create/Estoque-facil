@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../auth/context";
 import {
   Plus,
-  Barcode,
   Package,
   ArrowLeftRight,
   CheckCircle,
@@ -127,10 +126,10 @@ export function ProdutoFormPage() {
       </header>
 
       {error && (
-        <div className="bg-red-100 text-red-800 rounded-2xl p-3 mb-4 animate-shake">
+        <div className="bg-red-100 text-red-800 rounded-2xl p-3 mb-4">
           {error}
         </div>
-      )}
+      )
 
       <form className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 max-w-md mx-auto">
         <div className="grid grid-cols-2 gap-3">
@@ -287,9 +286,9 @@ export function ProdutoFormPage() {
               onChange={(e) => {
                 const f = e.target.files?.[0];
                 if (f) {
-                  // Em produção, comprimir a imagem
                   const reader = new FileReader();
-                  reader.onload = (e) => setForm((pf) => ({ ...pf, photo: e.target?.result as string }));
+                  reader.onload = (e) =>
+                    setForm((pf) => ({ ...pf, photo: e.target?.result as string }));
                   reader.readAsDataURL(f);
                 }
               }}
@@ -343,7 +342,7 @@ export function ProdutoFormPage() {
         </div>
 
         <button
-          type="submit"
+          type="button"
           disabled={isSaving}
           className="w-full bg-primary text-white font-bold rounded-xl py-3 flex items-center justify-center gap-2"
         >
@@ -359,15 +358,4 @@ export function ProdutoFormPage() {
       )}
     </div>
   );
-}
-
-/* Animação shake simples para erros */
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-10px); }
-  40%, 80% { transform: translateX(10px); }
-}
-
-.animate-shake {
-  animation: shake 0.5s ease-in-out;
 }

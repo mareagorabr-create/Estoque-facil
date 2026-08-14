@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BarChart3, CircleDollarSign, PackageX, ShoppingCart, Clipboard, Download, Settings } from "lucide-react";
+import { BarChart3, CircleDollarSign, Package, PackageX, ShoppingCart, Clipboard, Download } from "lucide-react";
 import { useAuth } from "../auth/context";
 import {
   garantirDadosDemo,
@@ -113,7 +113,7 @@ export function RelatoriosPage() {
         <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-400">
           <p className="text-lg">Sem vendas registradas neste mês.</p>
         </div>
-      )
+      )}
 
       {/* Previsão de compra */}
       <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
@@ -139,7 +139,7 @@ export function RelatoriosPage() {
         <div className="bg-white rounded-2xl border border-slate-200 p-4 text-slate-400">
           <p>Sem dados suficientes para sugerir compras ainda.</p>
         </div>
-      )
+      )}
 
       {/* Produtos parados */}
       <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
@@ -160,7 +160,7 @@ export function RelatoriosPage() {
         <div className="bg-white rounded-2xl border border-slate-200 p-6 text-center text-slate-400">
           <p>Nenhum produto parado nos últimos 30 dias.</p>
         </div>
-      )
+      )}
 
       {/* Ações de exportação */}
       <div className="mt-6 p-4 bg-white rounded-2xl border border-slate-200">

@@ -98,6 +98,9 @@ export async function limparTodosProdutos(userId: string): Promise<number> {
     await db.products.delete(p.id);
     await enfileirarSync("delete", "products", { id: p.id });
   }
+  if (typeof localStorage !== "undefined") {
+    localStorage.setItem(chaveDemoSeed(userId), "1");
+  }
   return produtos.length;
 }
 
@@ -453,9 +456,23 @@ export async function getProdutosParados(userId: string, dias = 30): Promise<Pro
 
 // ── Dados de demonstração ───────────────────────────────────────────────────
 
-/** Popula a loja com dados demo na primeira vez (apenas para testes/MVP). */
+function chaveDemoSeed(userId: string): string {
+  return `ef_demo_seed_v1_${userId}`;
+}
+
+/**
+ * Popula a loja com dados demo apenas uma vez por usuário.
+ * Depois que o usuário já recebeu os dados demo (ou já criou os próprios
+ * produtos), nunca mais re-popula — mesmo que ele apague todos os produtos.
+ */
 export async function garantirDadosDemo(userId: string): Promise<void> {
+  if (typeof localStorage !== "undefined" && localStorage.getItem(chaveDemoSeed(userId)) === "1") {
+    return;
+  }
   const count = await db.products.where("userId").equals(userId).count();
+  if (typeof localStorage !== "undefined") {
+    localStorage.setItem(chaveDemoSeed(userId), "1");
+  }
   if (count > 0) return;
   await seedDadosDemo(userId);
 }

@@ -92,6 +92,15 @@ export async function removerProduto(id: string): Promise<void> {
   await enfileirarSync("delete", "products", { id });
 }
 
+export async function limparTodosProdutos(userId: string): Promise<number> {
+  const produtos = await db.products.where("userId").equals(userId).toArray();
+  for (const p of produtos) {
+    await db.products.delete(p.id);
+    await enfileirarSync("delete", "products", { id: p.id });
+  }
+  return produtos.length;
+}
+
 export async function buscarProduto(id: string): Promise<Product | undefined> {
   return db.products.get(id);
 }

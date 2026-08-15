@@ -7,6 +7,7 @@ import {
   zerarEstoqueProduto,
   zerarTodoEstoque,
   removerProduto,
+  limparTodosProdutos,
 } from "../data";
 import type { Product } from "../db";
 import { formatarMoeda } from "../lib/format";
@@ -16,6 +17,8 @@ export function ProdutosPage() {
   const [produtos, setProdutos] = useState<Product[]>([]);
   const [confirmarZerar, setConfirmarZerar] = useState<string | null>(null);
   const [confirmarExcluir, setConfirmarExcluir] = useState<string | null>(null);
+  const [confirmarZerarTudo, setConfirmarZerarTudo] = useState(false);
+  const [confirmarLimparTudo, setConfirmarLimparTudo] = useState(false);
   const [zerando, setZerando] = useState(false);
 
   useEffect(() => {
@@ -45,28 +48,30 @@ export function ProdutosPage() {
         <p className="text-sm text-slate-500">{produtos.length} cadastrados</p>
       </header>
 
-      <div className="flex gap-2 mb-4">
+      <div className="flex flex-col gap-2 mb-4">
         <Link
           to="/novo-produto"
-          className="flex-1 bg-primary text-white font-bold rounded-xl py-2.5 flex items-center justify-center gap-2 text-sm"
+          className="w-full bg-primary text-white font-bold rounded-xl py-2.5 flex items-center justify-center gap-2 text-sm"
         >
           <Plus size={18} /> Novo Produto
         </Link>
         {produtos.length > 0 && (
-          <button
-            onClick={async () => {
-              if (window.confirm("Zerar todo o estoque? Esta ação não pode ser desfeita.")) {
-                setZerando(true);
-                await zerarTodoEstoque(user!.id);
-                await refreshProdutos();
-                setZerando(false);
-              }
-            }}
-            disabled={zerando}
-            className="px-3 bg-danger/10 text-danger rounded-xl font-bold text-sm disabled:opacity-50"
-          >
-            <RefreshCw size={16} />
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setConfirmarZerarTudo(true)}
+              disabled={zerando}
+              className="flex-1 px-3 py-2.5 bg-amber-100 text-amber-800 rounded-xl font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              <RefreshCw size={16} /> Zerar quantidades
+            </button>
+            <button
+              onClick={() => setConfirmarLimparTudo(true)}
+              disabled={zerando}
+              className="flex-1 px-3 py-2.5 bg-danger/10 text-danger rounded-xl font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              <Trash2 size={16} /> Apagar todos
+            </button>
+          </div>
         )}
       </div>
 
@@ -166,6 +171,70 @@ export function ProdutosPage() {
               </button>
               <button
                 onClick={() => setConfirmarZerar(null)}
+                className="flex-1 bg-slate-100 text-slate-700 font-bold py-2 rounded-xl text-sm"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmarZerarTudo && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-5 mx-4 max-w-sm">
+            <h3 className="font-bold mb-2">Zerar todas as quantidades?</h3>
+            <p className="text-sm text-slate-600 mb-4">
+              O estoque de todos os {produtos.length} produtos será definido para zero. Os produtos continuarão na lista.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={async () => {
+                  setZerando(true);
+                  await zerarTodoEstoque(user!.id);
+                  await refreshProdutos();
+                  setConfirmarZerarTudo(false);
+                  setZerando(false);
+                }}
+                disabled={zerando}
+                className="flex-1 bg-amber-600 text-white font-bold py-2 rounded-xl text-sm disabled:opacity-50"
+              >
+                {zerando ? "Zerando..." : "Zerar tudo"}
+              </button>
+              <button
+                onClick={() => setConfirmarZerarTudo(false)}
+                className="flex-1 bg-slate-100 text-slate-700 font-bold py-2 rounded-xl text-sm"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmarLimparTudo && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-5 mx-4 max-w-sm">
+            <h3 className="font-bold mb-2 text-danger">Apagar todos os produtos?</h3>
+            <p className="text-sm text-slate-600 mb-4">
+              Todos os {produtos.length} produtos serão <strong>removidos permanentemente</strong>. Esta ação não pode ser desfeita.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={async () => {
+                  setZerando(true);
+                  await limparTodosProdutos(user!.id);
+                  await refreshProdutos();
+                  setConfirmarLimparTudo(false);
+                  setZerando(false);
+                }}
+                disabled={zerando}
+                className="flex-1 bg-danger text-white font-bold py-2 rounded-xl text-sm disabled:opacity-50"
+              >
+                {zerando ? "Apagando..." : "Apagar todos"}
+              </button>
+              <button
+                onClick={() => setConfirmarLimparTudo(false)}
                 className="flex-1 bg-slate-100 text-slate-700 font-bold py-2 rounded-xl text-sm"
               >
                 Cancelar

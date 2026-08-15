@@ -196,6 +196,29 @@ export async function removerFornecedor(id: string): Promise<void> {
   await enfileirarSync("delete", "suppliers", { id });
 }
 
+
+// ── Zerar Estoque ─────────────────────────────────────────────────────────────────
+
+export async function zerarEstoqueProduto(productId: string): Promise<void> {
+  await db.products.update(productId, {
+    quantity: 0,
+    updatedAt: new Date().toISOString(),
+    pendingSync: true,
+  });
+}
+
+export async function zerarTodoEstoque(userId: string): Promise<number> {
+  const produtos = await db.products.where('userId').equals(userId).toArray();
+  for (const p of produtos) {
+    await db.products.update(p.id, {
+      quantity: 0,
+      updatedAt: new Date().toISOString(),
+      pendingSync: true,
+    });
+  }
+  return produtos.length;
+}
+
 // ── Alertas ─────────────────────────────────────────────────────────────────
 
 const DIAS_PADRAO_VENCENDO = 7;

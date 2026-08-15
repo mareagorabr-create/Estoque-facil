@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
-import { Package, AlertTriangle, RefreshCw, Plus } from "lucide-react";
+import { Package, RefreshCw, Plus, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/context";
-import { listarProdutosOrdenados, zerarEstoqueProduto, zerarTodoEstoque } from "../data";
+import {
+  listarProdutosOrdenados,
+  zerarEstoqueProduto,
+  zerarTodoEstoque,
+  removerProduto,
+} from "../data";
 import type { Product } from "../db";
 import { formatarMoeda } from "../lib/format";
 
@@ -10,6 +15,7 @@ export function ProdutosPage() {
   const { user } = useAuth();
   const [produtos, setProdutos] = useState<Product[]>([]);
   const [confirmarZerar, setConfirmarZerar] = useState<string | null>(null);
+  const [confirmarExcluir, setConfirmarExcluir] = useState<string | null>(null);
   const [zerando, setZerando] = useState(false);
 
   useEffect(() => {
@@ -62,13 +68,6 @@ export function ProdutosPage() {
             <RefreshCw size={16} />
           </button>
         )}
-      </div>
-
-      <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl p-3 mb-4">
-        <p className="text-xs font-semibold flex items-center gap-2">
-          <AlertTriangle size={15} />
-          Cadastro, edição e exclusão completos chegam na próxima etapa (ETAPA 2).
-        </p>
       </div>
 
       {baixo > 0 && (
@@ -125,6 +124,12 @@ export function ProdutosPage() {
                       Zerar
                     </button>
                   )}
+                  <button
+                    onClick={() => setConfirmarExcluir(p.id)}
+                    className="text-[10px] text-slate-400 hover:text-danger font-semibold ml-2 inline-flex items-center gap-1"
+                  >
+                    <Trash2 size={11} /> Excluir
+                  </button>
                   {baixoEstoque && (
                     <p className="text-[10px] font-bold text-danger">ESTOQUE BAIXO</p>
                   )}
@@ -161,6 +166,38 @@ export function ProdutosPage() {
               </button>
               <button
                 onClick={() => setConfirmarZerar(null)}
+                className="flex-1 bg-slate-100 text-slate-700 font-bold py-2 rounded-xl text-sm"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmarExcluir && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-5 mx-4 max-w-sm">
+            <h3 className="font-bold mb-2">Excluir produto?</h3>
+            <p className="text-sm text-slate-600 mb-4">
+              "{produtos.find((p) => p.id === confirmarExcluir)?.name}" será removido permanentemente. Esta ação não pode ser desfeita.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={async () => {
+                  setZerando(true);
+                  await removerProduto(confirmarExcluir);
+                  await refreshProdutos();
+                  setConfirmarExcluir(null);
+                  setZerando(false);
+                }}
+                disabled={zerando}
+                className="flex-1 bg-danger text-white font-bold py-2 rounded-xl text-sm disabled:opacity-50"
+              >
+                {zerando ? "Excluindo..." : "Excluir"}
+              </button>
+              <button
+                onClick={() => setConfirmarExcluir(null)}
                 className="flex-1 bg-slate-100 text-slate-700 font-bold py-2 rounded-xl text-sm"
               >
                 Cancelar
